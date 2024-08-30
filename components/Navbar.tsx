@@ -20,7 +20,7 @@ const Navbar = () => {
         </ul>
         <div className='flex gap-2 p-2 mr-3'>
   <Link href={'/login'}>
-        <Button variant="default">Login</Button>
+        <Button variant="default">Login into see</Button>
         </Link>
         <Link href={'/signup'}>
         <Button variant="default">Signup</Button>
