@@ -3,6 +3,10 @@ const express = require("express");
 
 const app = express();
 const connectToDatabase = require("./dbCon");
+const userRoutes = require("./routes/user")
+app.use(express.json());
+
+app.use('/api/user',userRoutes)
 
 connectToDatabase();
 
