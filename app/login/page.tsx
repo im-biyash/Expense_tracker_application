@@ -20,7 +20,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3000/api/user/login', {
+      const res = await axios.post('http://localhost:3001/api/user/login', {
         email,
         password
       });
@@ -29,8 +29,10 @@ const Login = () => {
         setLoading(false);
         // Store JWT token and dispatch login action
         localStorage.setItem('token', res.data.token);
+        console.log(res.data.token);
+        
       console.log(res.data.token);
-        dispatch(login(email)); // Example: Dispatch login with email
+        // dispatch(login(email)); // Example: Dispatch login with email
         router.push('/dashboard'); // Redirect to dashboard
       } else {
         setError(res.data.msg);

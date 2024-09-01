@@ -1,6 +1,3 @@
-// /src/features/auth/authSlice.ts
-
-
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface AuthState {
@@ -16,9 +13,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action: PayloadAction<string>) => {
+      console.log('Dispatching login action with payload:', action.payload);
       state.user = action.payload;
     },
     logout: (state) => {
+      console.log('Dispatching logout action');
       state.user = null;
     },
   },
