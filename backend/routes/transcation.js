@@ -2,10 +2,10 @@
 const express = require('express')
 const router = express.Router();
 
-const {getallTranscation,addTranscation} = require('../controller/transcationcontroller')
+const {getAllTransactions,addTransaction} = require('../controller/transcationcontroller')
 
-router.get('/getall',getallTranscation);
+router.get('/getall',getAllTransactions);
 
-router.post('/add',addTranscation);
+router.post('/add',addTransaction);
 
 module.exports = router;

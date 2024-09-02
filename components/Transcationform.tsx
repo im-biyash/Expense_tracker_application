@@ -1,5 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { addTransaction } from "../app/features/userTranscations/transactionSlice";
+import { selectUser } from "../app/features/auth/authSelector"; 
+import { selectUserId } from '../app/features/auth/authSelector';
 import {
   Card,
   CardContent,
@@ -17,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+
 const Transcationform = () => {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
@@ -25,21 +32,31 @@ const Transcationform = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  const router = useRouter(); // Initialize useRouter
+  const userId = useSelector(selectUserId);
+  console.log(userId);
+   // Use the selector to get userId
+  const dispatch = useDispatch();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/transcation/add",
-        {
-          amount,
-          type,
-          description,
-          date,
-        }
-      );
+        const response = await axios.post(
+            "http://localhost:3001/api/transaction/add",
+            {
+              amount,
+              type,
+              description,
+              date,
+              userId
+            }
+          );
+      console.log(response.data); // Check what the backend returns
       if (response.status === 201) {
+        const newTransaction = response.data.transaction; // Ensure this matches the backend response
+        dispatch(addTransaction(newTransaction));
         setSuccess("Transaction saved successfully");
-        // Clear form fields if needed
+        toast("Transaction created successfully");
         setAmount("");
         setType("");
         setDescription("");
@@ -47,10 +64,15 @@ const Transcationform = () => {
       } else {
         setError("Failed to save the transaction");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Transaction API Error:", error);
+      console.error("Error Response:", error.response); // Add this line for more details
       setError("An error occurred. Please try again.");
     }
+  };
+
+  const handleShowAllTransactions = () => {
+    router.push("/transcationhistory"); // Redirect to TransactionHistory page
   };
 
   return (
@@ -114,9 +136,16 @@ const Transcationform = () => {
               onChange={(e) => setDate(e.target.value)}
             />
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-2">
             <Button type="submit" className="w-full">
               Save Transaction
+            </Button>
+            <Button
+              type="button"
+              className="w-full"
+              onClick={handleShowAllTransactions}
+            >
+              Show All Transactions
             </Button>
           </CardFooter>
         </form>

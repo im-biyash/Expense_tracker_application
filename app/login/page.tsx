@@ -27,7 +27,7 @@ const Login = () => {
           const { token, username } = res.data; 
 
           localStorage.setItem('token', token);
-          dispatch(login({ username, email, token }));
+          dispatch(login({ userId, username, email, token }));
           router.push('/dashboard');
       } else {
           setError(res.data.msg);
