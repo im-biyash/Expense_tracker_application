@@ -24,7 +24,7 @@ const Login = () => {
       const res = await axios.post('http://localhost:3001/api/user/login', { email, password });
       
       if (res.status === 200) {
-          const { token, username } = res.data; // Ensure `username` is included in the response
+          const { token, username } = res.data; 
 
           localStorage.setItem('token', token);
           dispatch(login({ username, email, token }));
