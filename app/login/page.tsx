@@ -17,30 +17,28 @@ const Login = () => {
  const [loading, setLoading] = useState(false);
 
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post('http://localhost:3001/api/user/login', {
-        email,
-        password
-      });
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  try {
       setLoading(true);
+      const res = await axios.post('http://localhost:3001/api/user/login', { email, password });
+      
       if (res.status === 200) {
-        setLoading(false);
-        // Store JWT token and dispatch login action
-        localStorage.setItem('token', res.data.token);
-        console.log(res.data.token);
-        
-      console.log(res.data.token);
-        // dispatch(login(email)); // Example: Dispatch login with email
-        router.push('/dashboard'); // Redirect to dashboard
+          const { token, username } = res.data; // Ensure `username` is included in the response
+
+          localStorage.setItem('token', token);
+          dispatch(login({ username, email, token }));
+          router.push('/dashboard');
       } else {
-        setError(res.data.msg);
+          setError(res.data.msg);
       }
-    } catch (error) {
+  } catch (error) {
       setError('An error occurred. Please try again.');
-    }
-  };
+  } finally {
+      setLoading(false);
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center h-screen">

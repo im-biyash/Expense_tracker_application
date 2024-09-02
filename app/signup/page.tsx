@@ -29,8 +29,8 @@ const Signup = () => {
       if (res.status === 200) {
         localStorage.setItem('token', res.data.token);
         alert("User created successfully");
-        dispatch(login(username));
-        router.push('/login');
+        dispatch(login({ username, email, token: res.data.token || '' }));
+        router.push('/dashboard');
       } else {
         setError(res.data.msg || 'An error occurred. Please try again.');
       }
