@@ -1,29 +1,24 @@
-
 "use client";
-import React, { useEffect } from 'react';
+import React, { ComponentType } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { selectUser } from '../features/auth/authSelector'; // Ensure this path is correct
+import { RootState } from '../store'; // Adjust the path to your store
 
-const withAuth = (WrappedComponent: React.ComponentType) => {
-  const ProtectedComponent = (props: any) => {
+const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
+  return (props: P) => {
     const router = useRouter();
-    const user = useSelector(selectUser); // Get the current user from Redux state
+    const isAuthenticated = useSelector((state: RootState) => state.auth.isLoggedIn);
 
     useEffect(() => {
-      if (!user) {
-        
-        router.push('/login'); // Redirect to login if not authenticated
+      if (!isAuthenticated) {
+        router.push('/login');
       }
-    }, [user, router]);
+    }, [isAuthenticated, router]);
 
-    // If user is not logged in, do not render the wrapped component
-    if (!user) return null;
-
-    return <WrappedComponent {...props} />;
+    // Only render the wrapped component if authenticated
+    return isAuthenticated ? <WrappedComponent {...props} /> : null;
   };
-
-  return ProtectedComponent;
 };
 
 export default withAuth;

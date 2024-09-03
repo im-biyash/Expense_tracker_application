@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+
 import { toast } from "sonner";
 
 import { selectUserId } from "../app/features/auth/authSelector"; // Adjust the import path as needed
@@ -34,66 +33,7 @@ const Transcationform = () => {
   const router = useRouter();
   const userId = useSelector(selectUserId); // Get the user ID from Redux state
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!userId) {
-      setError("User not authenticated.");
-      return;
-    }
   
-    // Retrieve the token from local storage or wherever it's stored
-    const token = localStorage.getItem('token');
-    console.log('Retrieved token:', token); // Debug token retrieval
-    
-  
-    try {
-      const response = await axios.post(
-        "http://localhost:3001/api/transaction/add",
-        {
-          amount,
-          type,
-          description,
-          date,
-          userId // Include userId in the request payload
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}` // Make sure 'Bearer ' is correctly prefixed
-          }
-          
-        }
-      );
-  
-      console.log(response.data); // Check what the backend returns
-  
-      if (response.status === 201) {
-        setSuccess("Transaction saved successfully");
-        toast("Transaction created successfully");
-        setAmount("");
-        setType("");
-        setDescription("");
-        setDate("");
-      } else {
-        setError("Failed to save the transaction");
-      }
-    } catch (error: any) {
-      setLoading(false);
-      // Enhanced error handling
-      if (error.response) {
-        // Server responded with a status other than 2xx
-        console.error("Error Response:", error.response);
-        setError(error.response.data?.msg || "An error occurred. Please try again.");
-      } else if (error.request) {
-        // No response was received
-        console.error("Error Request:", error.request);
-        setError("No response received from server. Please try again.");
-      } else {
-        // Something else happened
-        console.error("Error Message:", error.message);
-        setError("An error occurred. Please try again.");
-      }
-    }
-  };
   
   const handleShowAllTransactions = () => {
     router.push("/transcationhistory"); // Redirect to TransactionHistory page

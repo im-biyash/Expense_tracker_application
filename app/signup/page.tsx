@@ -1,21 +1,24 @@
-// Import statements
 "use client";
+import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-
-
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Signup = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
@@ -27,28 +30,18 @@ const Signup = () => {
     }
   
     try {
-      const response = await fetch('/api/user/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
+      const response = await axios.post('http://localhost:3001/api/user/signup', {
+        username,
+        email,
+        password,
       });
   
-      const data = await response.json();
-  
-      if (response.ok) {
-        // Handle successful signup
-        console.log('Signup successful:', data);
-        // Redirect or show success message
-        router.push('/login'); // Redirect to login page
-      } else {
-        // Handle errors from server
-        setError(data.msg || 'Something went wrong');
-      }
+      // Handle successful signup
+      console.log('Signup successful:', response.data);
+      router.push('/login'); // Redirect to login page
     } catch (error) {
       console.error('Signup Error:', error);
-      setError('An unexpected error occurred');
+      setError('An error occurred during signup');
     }
   };
   
@@ -93,7 +86,9 @@ const Signup = () => {
             <Button type="submit" className="w-full">
               Register
             </Button>
-            <p>Already have an account? <a href="/login">Login</a></p>
+            <p>
+              Already have an account? <a href="/login">Login</a>
+            </p>
           </CardFooter>
         </form>
       </Card>

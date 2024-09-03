@@ -1,5 +1,5 @@
 // controllers/userController.js
-c
+
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
@@ -82,7 +82,13 @@ const loginUser = async (req, res) => {
       }
     );
 
-    res.json({ msg: "Login successful", token });
+    res.json({
+      msg: 'Login successful',
+      username: user.username,
+      email: user.email,
+      token
+    });
+    
   } catch (error) {
     console.error("Login Error:", error);
     res.status(401).json({ msg: error.message });
