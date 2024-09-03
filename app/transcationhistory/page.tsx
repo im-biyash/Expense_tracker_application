@@ -1,46 +1,71 @@
 "use client";
-import React, { useEffect } from "react";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { setTransactions } from "../features/userTranscations/transactionSlice";
-import { selectTransactions } from "../features/userTranscations/transactionSelector"; // Create a selector to get transactions from the state
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { selectUserId } from '../features/auth/authSelector'; // Adjust import path as needed
 
-const transactionHistory = () => {
-  const dispatch = useDispatch();
-  const transactions = useSelector(selectTransactions);
+interface Transaction {
+  _id: string;
+  amount: number;
+  type: string;
+  description: string;
+  date: string; // Use Date if you're dealing with Date objects
+}
+
+const TransactionHistory = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const userId = useSelector(selectUserId); // Get the user ID from Redux state
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      if (!userId) {
+        setError('User not authenticated.');
+        return;
+      }
+
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:3001/api/transcation/all",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        dispatch(setTransactions(response.data.transactions));
-      } catch (error) {
-        console.error("Fetch Transactions Error:", error);
+        const response = await axios.get(`http://localhost:3001/api/transaction/user/${userId}`);
+        setTransactions(response.data);
+      } catch (error: any) {
+        console.error('Error fetching transactions:', error.response);
+        setError('An error occurred while fetching transactions.');
       }
     };
 
     fetchTransactions();
-  }, [dispatch]);
+  }, [userId]);
 
   return (
     <div>
       <h1>Transaction History</h1>
-      <ul>
-        {transactions.map((transaction) => (
-          <li key={transaction.id}>
-            {transaction.amount} - {transaction.type} -{" "}
-            {transaction.description} - {transaction.date}
-          </li>
-        ))}
-      </ul>
+      {error && <p className="text-red-500">{error}</p>}
+      {transactions.length === 0 ? (
+        <p>No transactions found.</p>
+      ) : (
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Description</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transactions.map((transaction) => (
+              <tr key={transaction._id}>
+                <td>{transaction.amount}</td>
+                <td>{transaction.type}</td>
+                <td>{transaction.description}</td>
+                <td>{new Date(transaction.date).toLocaleDateString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
 
-export default transactionHistory;
+export default TransactionHistory;

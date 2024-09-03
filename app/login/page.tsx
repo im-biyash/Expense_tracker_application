@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-import { login } from '../features/auth/authSlice';
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,33 +11,39 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const dispatch = useDispatch();
- const [loading, setLoading] = useState(false);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent the default form submission
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  try {
-      setLoading(true);
-      const res = await axios.post('http://localhost:3001/api/user/login', { email, password });
-      
-      if (res.status === 200) {
-          const { token, username } = res.data; 
+    if (!email || !password) {
+      setError('Both fields are required');
+      return;
+    }
 
-          localStorage.setItem('token', token);
-          dispatch(login({ userId, username, email, token }));
-          router.push('/dashboard');
+    setLoading(true); // Set loading state to true
+
+    try {
+      const response = await axios.post('/api/user/login', {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        console.log('Login successful:', response.data);
+        localStorage.setItem('token', response.data.token);
+        router.push('/dashboard');
       } else {
-          setError(res.data.msg);
+        setError(response.data.msg || 'Something went wrong');
       }
-  } catch (error) {
-      setError('An error occurred. Please try again.');
-  } finally {
-      setLoading(false);
-  }
-};
-
+    } catch (error: any) {
+      console.error('Login Error:', error);
+      setError(error.response?.data?.msg || 'An unexpected error occurred');
+    } finally {
+      setLoading(false); // Set loading state to false
+    }
+  };
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -69,7 +74,7 @@ const Login = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           <CardFooter className="flex flex-col w-full gap-2 justify-center">
             <Button type="submit" className="w-full">
-             {loading ? "Loading..." : "Login"} 
+              {loading ? "Loading..." : "Login"}
             </Button>
             <p>Don't have an account? <a href="/signup">Sign up</a></p>
           </CardFooter>

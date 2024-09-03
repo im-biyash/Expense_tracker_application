@@ -18,7 +18,7 @@ const Navbar = () => {
       console.log('Logging out...');
       dispatch(logout()); // Dispatch logout action first
       localStorage.removeItem('token'); // Then remove token
-       router.push('/home'); // Navigate after state is updated and token is removed
+       router.push('/'); // Navigate after state is updated and token is removed
     } catch (error) {
       console.error('Logout error:', error);
     }

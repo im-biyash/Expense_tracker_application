@@ -1,11 +1,6 @@
-const mongoose = require('mongoose');
 
+const mongoose = require('mongoose');
 const transactionSchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true,
-        ref: 'User' // Assuming you have a User model
-      },
   amount: {
     type: Number,
     required: true,
@@ -21,6 +16,10 @@ const transactionSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true, // Ensure this is required if necessary
+    ref: 'User', // Reference to User model if needed
+  },
 });
-
-module.exports = mongoose.model('Transaction', transactionSchema);
+module.exports = mongoose.model('Transcation', transactionSchema)

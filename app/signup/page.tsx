@@ -1,11 +1,10 @@
 // Import statements
 "use client";
-import axios
- from 'axios';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDispatch } from 'react-redux';
-import { login } from '../features/auth/authSlice';
+
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -16,29 +15,43 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const dispatch = useDispatch();
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the default form submission
+  
+    // Basic client-side validation
+    if (!username || !email || !password) {
+      setError('All fields are required');
+      return;
+    }
+  
     try {
-      const res = await axios.post('http://localhost:3001/api/user/signup', {
-        username,
-        email,
-        password
+      const response = await fetch('/api/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
       });
-      if (res.status === 200) {
-        localStorage.setItem('token', res.data.token);
-        alert("User created successfully");
-        dispatch(login({userId, username, email, token: res.data.token || '' }));
-        router.push('/dashboard');
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Handle successful signup
+        console.log('Signup successful:', data);
+        // Redirect or show success message
+        router.push('/login'); // Redirect to login page
       } else {
-        setError(res.data.msg || 'An error occurred. Please try again.');
+        // Handle errors from server
+        setError(data.msg || 'Something went wrong');
       }
     } catch (error) {
-      console.error("Signup API Error:", error);
-      setError('An error occurred. Please try again.');
+      console.error('Signup Error:', error);
+      setError('An unexpected error occurred');
     }
   };
+  
 
   return (
     <div className="flex justify-center items-center h-screen">

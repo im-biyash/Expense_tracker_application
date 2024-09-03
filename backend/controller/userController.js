@@ -1,5 +1,5 @@
 // controllers/userController.js
-const express = require("express");
+c
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
@@ -49,20 +49,28 @@ const signupUser = async (req, res) => {
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-      throw new Error("All fields must be filled");
+      throw new Error("Email and password are required");
     }
 
+    if (!validator.isEmail(email)) {
+      throw new Error("Invalid email");
+    }
+
+    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
-      throw new Error("Invalid credentials");
+      throw new Error("User not found");
     }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-      throw new Error("Invalid credentials");
+    // Compare provided password with the hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new Error("Invalid password");
     }
 
+    // Generate a JWT token
     const token = jwt.sign(
       {
         id: user._id,
@@ -74,12 +82,15 @@ const loginUser = async (req, res) => {
       }
     );
 
-    res.json({ msg: "Successfully logged in", token });
+    res.json({ msg: "Login successful", token });
   } catch (error) {
     console.error("Login Error:", error);
-    res.status(500).json({ msg: error.message });
+    res.status(401).json({ msg: error.message });
   }
 };
+
+
+
 
 module.exports = {
   loginUser,

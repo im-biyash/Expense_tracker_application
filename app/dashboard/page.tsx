@@ -10,6 +10,7 @@ const Dashboard = () => {
 
   return (
     <div className='flex items-center justify-evenly min-h-[90vh] p-6 '>
+     
       <h1>Welcome {user?.username}</h1>
       <Transcationform/> {/* Display the logged-in user's username */}
     </div>
