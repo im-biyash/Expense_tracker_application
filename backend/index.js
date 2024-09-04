@@ -3,8 +3,9 @@ const cors = require('cors');
 const connectToDatabase = require('./dbCon');
 const userRoutes = require('./routes/user');
 // const transactionRoute = require('./routes/transcation'); // Updated file name
-
+const transactionRoutes = require('./routes/transcation')
 const app = express();
+const bodyParser = require("body-parser")
 
 // Configure CORS
 app.use(cors({
@@ -14,10 +15,11 @@ app.use(cors({
 }));
 
 app.use(express.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 // Use routes
 app.use('/api/user', userRoutes);
-// app.use('/api/transaction', transactionRoute); // Updated route
+
+app.use('/api/transaction', transactionRoutes);
 
 // Connect to database
 connectToDatabase();

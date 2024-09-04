@@ -1,9 +1,6 @@
+"use client";
 import React, { useState } from "react";
-import axios from "axios";
-
-import { toast } from "sonner";
-
-import { selectUserId } from "../app/features/auth/authSelector"; // Adjust the import path as needed
+import axios from "axios"; // Add axios for making HTTP requests
 import {
   Card,
   CardContent,
@@ -20,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import { useRouter } from "next/navigation";
 const Transcationform = () => {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
@@ -28,15 +25,62 @@ const Transcationform = () => {
   const [date, setDate] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const route = useRouter();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
-  const router = useRouter();
-  const userId = useSelector(selectUserId); // Get the user ID from Redux state
+    if (!amount || !type || !description || !date) {
+      setError("All fields are required");
+      return;
+    }
 
-  
-  
+    setLoading(true);
+
+    try {
+      // Get the token from localStorage
+      const token = localStorage.getItem("token");
+      console.log("Token:", token); // Log the token to verify
+
+      if (!token) {
+        setError("You must be logged in to add a transaction");
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:3001/api/transaction/add",
+        { amount, type, description, date },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token to request headers
+          },
+        }
+      );
+
+      console.log("Response Data:", response.data); // Log response data
+
+      setSuccess(response.data.msg || "Transaction added successfully");
+
+      // Clear form fields
+      setAmount("");
+      setType("");
+      setDescription("");
+      setDate("");
+    } catch (error: any) {
+      console.error(
+        "Add Transaction Error:",
+        error.response?.data || error.message
+      ); // Log error
+      setError(error.response?.data?.msg || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleShowAllTransactions = () => {
-    router.push("/transcationhistory"); // Redirect to TransactionHistory page
+    route.push("/transcationlogs");
   };
 
   return (
@@ -72,11 +116,14 @@ const Transcationform = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setType("Expense")}>
+                <DropdownMenuItem onClick={() => setType("expense")}>
                   Expense
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setType("Saving")}>
-                  Saving
+                <DropdownMenuItem onClick={() => setType("income")}>
+                  Income
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setType("investment")}>
+                  Investment
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -101,8 +148,8 @@ const Transcationform = () => {
             />
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
-            <Button type="submit" className="w-full">
-              Save Transaction
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Saving..." : "Save Transaction"}
             </Button>
             <Button
               type="button"

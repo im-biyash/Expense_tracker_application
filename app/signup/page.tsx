@@ -2,7 +2,6 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { RingLoader } from "react-spinners";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -19,6 +19,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const[loading,setloading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
@@ -38,6 +39,7 @@ const Signup = () => {
   
       // Handle successful signup
       console.log('Signup successful:', response.data);
+      setloading(true);
       router.push('/login'); // Redirect to login page
     } catch (error) {
       console.error('Signup Error:', error);
@@ -48,6 +50,11 @@ const Signup = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
+      {loading && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+          <RingLoader color="#36d68f" size={150} speedMultiplier={1.5} />
+        </div>
+      )}
       <Card className="w-80 h-[500px] rounded-xl border-blue-300 p-2">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Register</CardTitle>

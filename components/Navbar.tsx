@@ -16,7 +16,7 @@ const Navbar = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      dispatch(login());
+      dispatch(login({token}));
     }
   }, [dispatch]);
 

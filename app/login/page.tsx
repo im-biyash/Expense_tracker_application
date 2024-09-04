@@ -2,6 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { RingLoader } from "react-spinners";
 import {
   Card,
   CardContent,
@@ -63,7 +64,12 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <Card className="w-80 h-[500px] rounded-xl border-blue-300 p-2">
+      {loading && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+          <RingLoader color="#36d68f" size={150} speedMultiplier={1.5} />
+        </div>
+      )}
+      <Card className={`w-80 h-[500px] rounded-xl border-blue-300 p-2 ${loading ? "opacity-50" : "opacity-100"}`}>
         <CardHeader>
           <CardTitle className="text-2xl text-center">Login</CardTitle>
         </CardHeader>
@@ -92,8 +98,8 @@ const Login = () => {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Loading..." : "Login"}
             </Button>
-            <p>
-              Don't have an account? <a href="/signup">Sign up</a>
+            <p className="text-center">
+              Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign up</a>
             </p>
           </CardFooter>
         </form>
