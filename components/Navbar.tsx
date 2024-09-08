@@ -1,26 +1,23 @@
-"use client";
-import React, { useEffect } from "react";
+
+'use client'
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { ModeToggle } from "../components/Mode-toogle";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../app/store"; // Adjust the path accordingly
+import { RootState } from "../app/store";
 import { login, logout } from "../app/features/auth/authSlice";
+import { FaBars } from "react-icons/fa";
+import { parseJwt } from "../app/utils/parseJwt"; // Import only the utility function
 
 const Navbar = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const parseJwt = (token: string) => {
-    try {
-      return JSON.parse(atob(token.split('.')[1]));
-    } catch (e) {
-      console.error("Invalid token:", e);
-      return null;
-    }
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -33,7 +30,7 @@ const Navbar = () => {
         dispatch(logout());
       }
     }
-  }, [dispatch]);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -46,49 +43,51 @@ const Navbar = () => {
   };
 
   return (
-    <div className=" p-2 bg-gray-100 dark:bg-gray-900 shadow">
+    <div className="p-2 bg-gray-100 dark:bg-gray-900 shadow">
       <nav className="flex justify-between items-center">
-        <ul className="flex flex-grow justify-center gap-6 font-serif ">
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li>
-            <Link href="/contact">Contact</Link>
-          </li>
-          <li>
-            <Link href="/developer">Developer</Link>
-          </li>
+        <div className="text-2xl">Logo</div>
+        <ul className="hidden md:flex flex-grow justify-center gap-6 font-serif">
+          <li><Link href="/">Home</Link></li>
+          <li><Link href="/developer">Developer </Link></li>
           {isLoggedIn && (
             <>
-              <li>
-                <Link href="/dashboard">Dashboard</Link>
-              </li>
-              <li>
-                <Link href="/transcationlogs">Transcation logs</Link>
-              </li>
+              <li><Link href="/dashboard">Dashboard</Link></li>
+              <li><Link href="/transcationlogs">Transcation logs</Link></li>
             </>
           )}
         </ul>
-        <div className="flex gap-2 p-2 mr-3">
+        <div className="hidden md:flex gap-2 p-2 mr-3">
           {!isLoggedIn ? (
             <>
-              <Link href="/login">
-                <Button variant="default">Login</Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="default">Signup</Button>
-              </Link>
+              <Link href="/login"><Button variant="default">Login</Button></Link>
+              <Link href="/signup"><Button variant="default">Signup</Button></Link>
             </>
           ) : (
-            <Button variant="default" onClick={handleLogout}>
-              Logout
-            </Button>
+            <Button variant="default" onClick={handleLogout}>Logout</Button>
           )}
         </div>
-        <div className="flex-shrink-0 mr-2 sm:mr-5">
+        <div className="md:flex-shrink-0 mr-7 items-center">
           <ModeToggle />
         </div>
+        <div className="md:hidden absolute right-4">
+          <button onClick={toggleMenu}>
+            <FaBars className="w-6 h-6 text-white" />
+          </button>
+        </div>
       </nav>
+      {isMenuOpen && (
+        <ul className="md:hidden flex flex-col gap-4 mt-4">
+          <li className="py-2"><Link href="/">Home</Link></li>
+          <li className="py-2"><Link href="/developer">Developer</Link></li>
+          <li className="py-2"><Link href="/developer">login</Link></li>
+          {isLoggedIn && (
+            <>
+              <li className="py-2"><Link href="/dashboard">Dashboard</Link></li>
+              <li className="py-2"><Link href="/transcationlogs">Transcation logs</Link></li>
+            </>
+          )}
+        </ul>
+      )}
     </div>
   );
 };
