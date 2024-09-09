@@ -66,7 +66,7 @@ const Navbar = () => {
             <Button variant="default" onClick={handleLogout}>Logout</Button>
           )}
         </div>
-        <div className="md:flex-shrink-0 mr-7 items-center">
+        <div className="md:flex-shrink-0 mr-9 items-center">
           <ModeToggle />
         </div>
         <div className="md:hidden absolute right-4">
