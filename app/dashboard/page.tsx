@@ -1,4 +1,3 @@
-
 "use client"
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -66,7 +65,12 @@ const Dashboard = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="flex items-center justify-evenly min-h-[90vh] p-6">
+    <div className="flex flex-col justify-center mt-4 md:flex-row md:items-center md:justify-evenly min-h-[90vh] p-6">
+      {/* Transcationform comes first in mobile view */}
+      <div className="flex flex-col gap-2 mb-2 md:mb-0">
+        <Transcationform />
+      </div>
+      {/* DoughnutChart will appear below Transcationform in mobile view */}
       <div className="flex flex-col gap-2 mb-2">
         <DoughnutChart
           income={income}
@@ -74,7 +78,6 @@ const Dashboard = () => {
           investment={investment}
         />
       </div>
-      <Transcationform />
     </div>
   );
 };

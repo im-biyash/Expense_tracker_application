@@ -9,9 +9,14 @@ import { useRouter } from 'next/navigation';
 const Home = () => {
 const router = useRouter();
 
-  const handleStart = () =>{
-    router.push('/login')
+const handleStart = () => {
+  try {
+    router.push('/login');
+  } catch (error) {
+    console.error("Navigation failed:", error);
   }
+};
+
   return (
     <div className='h-80vh flex flex-col justify-center items-center p-6'>
       <div className='flex flex-col md:flex-row items-center gap-6 justify-evenly w-full h-full'>

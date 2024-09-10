@@ -1,4 +1,3 @@
-
 'use client'
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -46,13 +45,14 @@ const Navbar = () => {
     <div className="p-2 bg-gray-100 dark:bg-gray-900 shadow">
       <nav className="flex justify-between items-center">
         <div className="text-2xl">Logo</div>
-        <ul className="hidden md:flex flex-grow justify-center gap-6 font-serif">
+        {/* Center the links on small screens */}
+        <ul className="flex flex-grow justify-center gap-6 font-serif">
           <li><Link href="/">Home</Link></li>
-          <li><Link href="/developer">Developer </Link></li>
+          <li><Link href="/developer">Developer</Link></li>
           {isLoggedIn && (
             <>
               <li><Link href="/dashboard">Dashboard</Link></li>
-              <li><Link href="/transcationlogs">Transcation logs</Link></li>
+              <li><Link href="/transcationlogs">Transaction logs</Link></li>
             </>
           )}
         </ul>
@@ -75,15 +75,24 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
+      {/* Show menu when isMenuOpen is true */}
       {isMenuOpen && (
-        <ul className="md:hidden flex flex-col gap-4 mt-4">
+        <ul className="md:hidden flex flex-col items-center gap-4 mt-4">
           <li className="py-2"><Link href="/">Home</Link></li>
           <li className="py-2"><Link href="/developer">Developer</Link></li>
-          <li className="py-2"><Link href="/developer">login</Link></li>
+          {!isLoggedIn && (
+            <>
+              <li className="py-2"><Link href="/login">Login</Link></li>
+              <li className="py-2"><Link href="/signup">Signup</Link></li>
+            </>
+          )}
           {isLoggedIn && (
             <>
+             <li className="py-2"><Link href="/">Home</Link></li>
+             <li className="py-2"><Link href="/developer">Developer</Link></li>
               <li className="py-2"><Link href="/dashboard">Dashboard</Link></li>
-              <li className="py-2"><Link href="/transcationlogs">Transcation logs</Link></li>
+              <li className="py-2"><Link href="/transcationlogs">Transaction logs</Link></li>
+              <li className="py-2"><Button onClick={handleLogout}>Logout</Button></li>
             </>
           )}
         </ul>
