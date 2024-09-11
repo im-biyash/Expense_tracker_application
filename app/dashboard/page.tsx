@@ -65,18 +65,27 @@ const Dashboard = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="flex flex-col justify-center mt-4 md:flex-row md:items-center md:justify-evenly min-h-[90vh] p-6">
-      {/* Transcationform comes first in mobile view */}
-      <div className="flex flex-col gap-2 mb-2 md:mb-0">
-        <Transcationform />
+    <div className="flex flex-col min-h-[100vh] p-4">
+      {/* Welcome message at the top */}
+      <div className="mb-6 mx-auto">
+        <h1 className="text-2xl font-serif text-red-400">Welcome, {username}</h1>
       </div>
-      {/* DoughnutChart will appear below Transcationform in mobile view */}
-      <div className="flex flex-col gap-2 mb-2">
-        <DoughnutChart
-          income={income}
-          expense={expense}
-          investment={investment}
-        />
+
+      {/* Flex container for form and chart */}
+      <div className="flex flex-col md:flex-row md:items-start md:justify-evenly gap-2">
+        {/* Transcationform comes first in mobile view */}
+        <div className="flex flex-col gap-2 mb-2 md:mb-0">
+          <Transcationform />
+        </div>
+
+        {/* DoughnutChart will appear beside Transcationform in larger view */}
+        <div className="flex flex-col gap-2 mt-8 justify-center">
+          <DoughnutChart 
+            income={income}
+            expense={expense}
+            investment={investment}
+          />
+        </div>
       </div>
     </div>
   );

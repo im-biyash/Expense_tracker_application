@@ -1,4 +1,3 @@
-"use client";
 import React, { ComponentType, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';

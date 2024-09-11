@@ -18,35 +18,43 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const[loading,setloading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
-  
+
     // Basic client-side validation
     if (!username || !email || !password) {
       setError('All fields are required');
       return;
     }
-  
+
+    setLoading(true); // Start loading
+
     try {
       const response = await axios.post('http://localhost:3001/api/user/signup', {
         username,
         email,
         password,
       });
-  
+
       // Handle successful signup
       console.log('Signup successful:', response.data);
-      setloading(true);
       router.push('/login'); // Redirect to login page
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup Error:', error);
-      setError('An error occurred during signup');
+
+      // Check if error response contains a message
+      if (error.response && error.response.data) {
+        setError(error.response.data.msg || 'An error occurred during signup');
+      } else {
+        setError('An error occurred during signup');
+      }
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
-  
 
   return (
     <div className="flex justify-center items-center h-screen">

@@ -8,7 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../app/store";
 import { login, logout } from "../app/features/auth/authSlice";
 import { FaBars } from "react-icons/fa";
-import { parseJwt } from "../app/utils/parseJwt"; // Import only the utility function
+import { parseJwt } from "../app/utils/parseJwt"; 
+import mylogo from "../app/assets/mylogo.png";
+import Image from "next/image";
 
 const Navbar = () => {
   const router = useRouter();
@@ -29,13 +31,14 @@ const Navbar = () => {
         dispatch(logout());
       }
     }
-  }, []);
+  }, [dispatch]);
 
   const handleLogout = async () => {
     try {
       localStorage.removeItem('token');
       dispatch(logout());
       router.push('/');
+      setIsMenuOpen(false); // Close menu after logout
     } catch (error) {
       console.error('Logout Error:', error);
     }
@@ -44,11 +47,18 @@ const Navbar = () => {
   return (
     <div className="p-2 bg-gray-100 dark:bg-gray-900 shadow">
       <nav className="flex justify-between items-center">
-        <div className="text-2xl">Logo</div>
+        <div className="text-2xl">
+          <Image
+            src= {mylogo}
+            alt="Logo"
+            width={60}
+            height={60}
+          />
+        </div>
         {/* Center the links on small screens */}
-        <ul className="flex flex-grow justify-center gap-6 font-serif">
+        <ul className="hidden md:flex flex-grow justify-center gap-6 font-serif">
           <li><Link href="/">Home</Link></li>
-          <li><Link href="/developer">Developer</Link></li>
+          <li><Link href="/about">About</Link></li>
           {isLoggedIn && (
             <>
               <li><Link href="/dashboard">Dashboard</Link></li>
@@ -59,8 +69,8 @@ const Navbar = () => {
         <div className="hidden md:flex gap-2 p-2 mr-3">
           {!isLoggedIn ? (
             <>
-              <Link href="/login"><Button variant="default">Login</Button></Link>
-              <Link href="/signup"><Button variant="default">Signup</Button></Link>
+              <Button variant="default" onClick={() => router.push('/login')}>Login</Button>
+              <Button variant="default" onClick={() => router.push('/signup')}>Signup</Button>
             </>
           ) : (
             <Button variant="default" onClick={handleLogout}>Logout</Button>
@@ -78,21 +88,32 @@ const Navbar = () => {
       {/* Show menu when isMenuOpen is true */}
       {isMenuOpen && (
         <ul className="md:hidden flex flex-col items-center gap-4 mt-4">
-          <li className="py-2"><Link href="/">Home</Link></li>
-          <li className="py-2"><Link href="/developer">Developer</Link></li>
-          {!isLoggedIn && (
+          <li className="py-2" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/">Home</Link>
+          </li>
+          <li className="py-2" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/about">About</Link>
+          </li>
+          {!isLoggedIn ? (
             <>
-              <li className="py-2"><Link href="/login">Login</Link></li>
-              <li className="py-2"><Link href="/signup">Signup</Link></li>
+              <li className="py-2" onClick={() => { router.push('/login'); setIsMenuOpen(false); }}>
+                <Button variant="default">Login</Button>
+              </li>
+              <li className="py-2" onClick={() => { router.push('/signup'); setIsMenuOpen(false); }}>
+                <Button variant="default">Signup</Button>
+              </li>
             </>
-          )}
-          {isLoggedIn && (
+          ) : (
             <>
-             <li className="py-2"><Link href="/">Home</Link></li>
-             <li className="py-2"><Link href="/developer">Developer</Link></li>
-              <li className="py-2"><Link href="/dashboard">Dashboard</Link></li>
-              <li className="py-2"><Link href="/transcationlogs">Transaction logs</Link></li>
-              <li className="py-2"><Button onClick={handleLogout}>Logout</Button></li>
+              <li className="py-2" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/dashboard">Dashboard</Link>
+              </li>
+              <li className="py-2" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/transcationlogs">Transaction logs</Link>
+              </li>
+              <li className="py-2">
+                <Button variant="default" onClick={handleLogout}>Logout</Button>
+              </li>
             </>
           )}
         </ul>
@@ -102,3 +123,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+    

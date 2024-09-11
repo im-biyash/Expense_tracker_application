@@ -69,27 +69,29 @@ const Page = () => {
             <p className="text-center">No transactions found.</p>
           ) : (
             <div className="overflow-x-auto">
-              <Table className="mx-auto w-3/4"> {/* Adjust the width here */}
-                
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-base">Amount</TableHead> {/* Adjust text size */}
-                    <TableHead className="text-base">Type</TableHead> {/* Adjust text size */}
-                    <TableHead className="text-base">Description</TableHead> {/* Adjust text size */}
-                    <TableHead className="text-base">Date</TableHead> {/* Adjust text size */}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transactions.map((transaction) => (
-                    <TableRow key={transaction._id}>
-                      <TableCell className="text-sm">{transaction.amount}</TableCell> {/* Adjust text size */}
-                      <TableCell className="text-sm">{transaction.type}</TableCell> {/* Adjust text size */}
-                      <TableCell className="text-sm">{transaction.description}</TableCell> {/* Adjust text size */}
-                      <TableCell className="text-sm">{new Date(transaction.date).toLocaleDateString()}</TableCell> {/* Adjust text size */}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+             <Table className="mx-auto w-3/4">
+  <TableHeader>
+    <TableRow>
+      <TableHead className="text-base">Amount</TableHead>
+      <TableHead className="text-base">Type</TableHead>
+      <TableHead className="text-base">Description</TableHead>
+      <TableHead className="text-base">Date</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {transactions.map((transaction) => (
+      <TableRow key={transaction._id}>
+        <TableCell className="text-sm">{transaction.amount}</TableCell>
+        <TableCell className="text-sm">{transaction.type}</TableCell>
+        <TableCell className="text-sm">{transaction.description}</TableCell>
+        <TableCell className="text-sm">
+          {new Date(transaction.date).toLocaleDateString()}
+        </TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+
             </div>
           )}
         </CardContent>

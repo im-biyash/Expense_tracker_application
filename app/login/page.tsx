@@ -69,7 +69,7 @@ const Login = () => {
           <RingLoader color="#36d68f" size={150} speedMultiplier={1.5} />
         </div>
       )}
-      <Card className={`w-80 h-[500px] rounded-xl border-blue-300 p-2 ${loading ? "opacity-50" : "opacity-100"}`}>
+      <Card className={`w-80 h-[400px] rounded-xl border-blue-300 p-2 ${loading ? "opacity-50" : "opacity-100"}`}>
         <CardHeader>
           <CardTitle className="text-2xl text-center">Login</CardTitle>
         </CardHeader>
