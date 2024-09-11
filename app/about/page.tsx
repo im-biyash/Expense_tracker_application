@@ -23,7 +23,7 @@ const About = () => {
 
         {/* Social Media Icons */}
         <div className="flex justify-center items-center gap-6 mt-4">
-          <a href="https://github.com/yourprofile" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/im-biyash" target="_blank" rel="noopener noreferrer">
             <FaGithub className="text-2xl hover:text-gray-600" />
           </a>
           <a href="https://www.linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">
