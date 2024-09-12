@@ -4,7 +4,7 @@ const router = express.Router();
 
 const { authenticate } = require('../middleware/authMiddleware');
 
-const { addTransaction, getTransactions } = require('../controller/transcationController');
+const { addTransaction, getTransactions } = require('../controllers/transcationController');
 
 router.post('/add', authenticate, addTransaction);
 
