@@ -7,8 +7,18 @@ interface AuthState {
   isLoggedIn: boolean;
 }
 
-// Function to get initial state from local storage
+// Function to get initial state from local storage (client-side only)
 const getInitialState = (): AuthState => {
+  if (typeof window === 'undefined') {
+    // Return default values if running on the server
+    return {
+      username: null,
+      email: null,
+      token: null,
+      isLoggedIn: false,
+    };
+  }
+
   const token = localStorage.getItem('token');
   return {
     username: token ? localStorage.getItem('username') : null,
@@ -31,8 +41,7 @@ const authSlice = createSlice({
       state.token = token;
       state.isLoggedIn = true;
 
-      // Store the data in local storage
-      if (token) {
+      if (typeof window !== 'undefined' && token) {
         localStorage.setItem('token', token);
         localStorage.setItem('username', username || '');
         localStorage.setItem('email', email || '');
@@ -44,10 +53,11 @@ const authSlice = createSlice({
       state.token = null;
       state.isLoggedIn = false;
 
-      // Remove the data from local storage
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
-      localStorage.removeItem('email');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+      }
     },
   },
 });

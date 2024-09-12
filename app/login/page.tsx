@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { RingLoader } from "react-spinners";
@@ -43,11 +43,13 @@ const Login = () => {
         console.log("Login successful:", response.data);
         const { username, email, token } = response.data;
 
+        // Only access localStorage if in the browser environment
+        if (typeof window !== "undefined") {
+          localStorage.setItem("token", token);
+        }
+
         // Dispatch login action with username, email, and token
         dispatch(login({ username, email, token }));
-
-        // Store the token in local storage
-        localStorage.setItem("token", token);
 
         // Redirect to dashboard
         router.push("/dashboard");
@@ -62,6 +64,11 @@ const Login = () => {
     }
   };
 
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null); // Clear the error when user types
+    setter(e.target.value);
+  };
+
   return (
     <div className="flex justify-center items-center h-screen">
       {loading && (
@@ -69,41 +76,46 @@ const Login = () => {
           <RingLoader color="#36d68f" size={150} speedMultiplier={1.5} />
         </div>
       )}
-      <Card className={`w-80 h-[400px] rounded-xl border-blue-300 p-2 ${loading ? "opacity-50" : "opacity-100"}`}>
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Login</CardTitle>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent>
-            <h1 className="p-1">Email</h1>
-            <Input
-              placeholder="Enter your email"
-              className="border-gray-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </CardContent>
-          <CardContent>
-            <h1 className="p-1">Password</h1>
-            <Input
-              placeholder="Enter your password"
-              className="border-gray-500"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </CardContent>
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          <CardFooter className="flex flex-col w-full gap-2 justify-center">
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : "Login"}
-            </Button>
-            <p className="text-center">
-              Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign up</a>
-            </p>
-          </CardFooter>
-        </form>
-      </Card>
+
+      {!loading && (
+        <Card className="w-80 h-[400px] rounded-xl border-blue-300 p-2">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center">Login</CardTitle>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent>
+              <h1 className="p-1">Email</h1>
+              <Input
+                placeholder="Enter your email"
+                aria-label="Email input"
+                className="border-gray-500"
+                value={email}
+                onChange={handleInputChange(setEmail)}
+              />
+            </CardContent>
+            <CardContent>
+              <h1 className="p-1">Password</h1>
+              <Input
+                placeholder="Enter your password"
+                aria-label="Password input"
+                className="border-gray-500"
+                type="password"
+                value={password}
+                onChange={handleInputChange(setPassword)}
+              />
+            </CardContent>
+            {error && <p className="text-red-500 text-center">{error}</p>}
+            <CardFooter className="flex flex-col w-full gap-2 justify-center">
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Loading..." : "Login"}
+              </Button>
+              <p className="text-center">
+                Don&apos;t have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign up</a>
+              </p>
+            </CardFooter>
+          </form>
+        </Card>
+      )}
     </div>
   );
 };

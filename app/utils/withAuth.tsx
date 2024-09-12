@@ -4,21 +4,18 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store'; // Adjust the path to your store
 
 const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
-  return (props: P) => {
+  const AuthComponent = (props: P) => {
     const router = useRouter();
     const [loading, setLoading] = useState(true); // Loading state
     const isAuthenticated = useSelector((state: RootState) => state.auth.isLoggedIn);
 
     useEffect(() => {
-      // Redirect only after loading state has been set to false
-      if (!loading) {
-        if (!isAuthenticated) {
-          router.push('/login');
-        }
+      if (!isAuthenticated) {
+        router.push('/login');
       } else {
-        setLoading(false);
+        setLoading(false); // Set loading to false once authentication is checked
       }
-    }, [isAuthenticated, router, loading]);
+    }, [isAuthenticated, router]);
 
     // Render a loading indicator while checking authentication
     if (loading) {
@@ -28,6 +25,11 @@ const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
     // Only render the wrapped component if authenticated
     return isAuthenticated ? <WrappedComponent {...props} /> : null;
   };
+
+  // Add display name for better debugging in React DevTools
+  AuthComponent.displayName = `WithAuth(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+
+  return AuthComponent;
 };
 
 export default withAuth;

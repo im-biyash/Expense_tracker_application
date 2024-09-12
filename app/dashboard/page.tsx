@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import withAuth from "../utils/withAuth";
@@ -19,9 +19,11 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         if (!token) {
-          throw new Error("You must be logged in to view transactions");
+          setError("You must be logged in to view transactions.");
+          setLoading(false);
+          return;
         }
 
         const response = await axios.get(

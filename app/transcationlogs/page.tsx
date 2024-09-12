@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -28,26 +27,29 @@ const Page = () => {
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      try {
+      if (typeof window !== "undefined") {
         const token = localStorage.getItem("token");
         if (!token) {
           setError("You must be logged in to view transactions.");
+          setLoading(false);
           return;
         }
 
-        const response = await axios.get("http://localhost:3001/api/transaction/get", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include token in headers
-          },
-        });
+        try {
+          const response = await axios.get("http://localhost:3001/api/transaction/get", {
+            headers: {
+              Authorization: `Bearer ${token}`, // Include token in headers
+            },
+          });
 
-        const fetchedTransactions = response.data.transactions || []; // Fallback to an empty array
-        setTransactions(fetchedTransactions);
-      } catch (error: any) {
-        console.error("Fetch Transactions Error:", error);
-        setError("An error occurred while fetching transactions.");
-      } finally {
-        setLoading(false);
+          const fetchedTransactions = response.data.transactions || []; // Fallback to an empty array
+          setTransactions(fetchedTransactions);
+        } catch (error: any) {
+          console.error("Fetch Transactions Error:", error);
+          setError("An error occurred while fetching transactions.");
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
@@ -69,29 +71,28 @@ const Page = () => {
             <p className="text-center">No transactions found.</p>
           ) : (
             <div className="overflow-x-auto">
-             <Table className="mx-auto w-3/4">
-  <TableHeader>
-    <TableRow>
-      <TableHead className="text-base">Amount</TableHead>
-      <TableHead className="text-base">Type</TableHead>
-      <TableHead className="text-base">Description</TableHead>
-      <TableHead className="text-base">Date</TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    {transactions.map((transaction) => (
-      <TableRow key={transaction._id}>
-        <TableCell className="text-sm">{transaction.amount}</TableCell>
-        <TableCell className="text-sm">{transaction.type}</TableCell>
-        <TableCell className="text-sm">{transaction.description}</TableCell>
-        <TableCell className="text-sm">
-          {new Date(transaction.date).toLocaleDateString()}
-        </TableCell>
-      </TableRow>
-    ))}
-  </TableBody>
-</Table>
-
+              <Table className="mx-auto w-3/4">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-base">Amount</TableHead>
+                    <TableHead className="text-base">Type</TableHead>
+                    <TableHead className="text-base">Description</TableHead>
+                    <TableHead className="text-base">Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {transactions.map((transaction) => (
+                    <TableRow key={transaction._id}>
+                      <TableCell className="text-sm">{transaction.amount}</TableCell>
+                      <TableCell className="text-sm">{transaction.type}</TableCell>
+                      <TableCell className="text-sm">{transaction.description}</TableCell>
+                      <TableCell className="text-sm">
+                        {new Date(transaction.date).toLocaleDateString()}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           )}
         </CardContent>
