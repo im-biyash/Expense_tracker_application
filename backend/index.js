@@ -6,7 +6,7 @@ const userRoutes = require('./routes/user');
 const transactionRoutes = require('./routes/transcation')
 const app = express();
 const bodyParser = require("body-parser")
-const  port = process.env.PORT || 3000
+const  port = process.env.PORT || 3001
 // Configure CORS
 app.use(cors({
   origin: 'http://localhost:3000', // Your frontend URL
