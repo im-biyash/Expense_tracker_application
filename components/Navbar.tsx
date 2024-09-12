@@ -100,7 +100,7 @@ const Navbar = () => {
           )}
         </div>
         <div className=" flex items-center gap-4">
-          <ModeToggle  /> {/* Add margin to ModeToggle */}
+          <ModeToggle  />
           <button
             onClick={toggleMenu}
             className="hover:text-blue-500 transition-colors duration-300"
