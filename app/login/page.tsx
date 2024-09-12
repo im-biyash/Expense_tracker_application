@@ -25,34 +25,38 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!email || !password) {
       setError("Both fields are required");
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       const response = await axios.post(
         "http://localhost:3001/api/user/login",
         { email, password }
       );
-
+  
       if (response.status === 200) {
         console.log("Login successful:", response.data);
-        const { username, email, token } = response.data;
-
+        const { username, email, token, role } = response.data;
+  
         // Only access localStorage if in the browser environment
         if (typeof window !== "undefined") {
           localStorage.setItem("token", token);
         }
-
-        // Dispatch login action with username, email, and token
+  
+        // Dispatch login action with username, email, token, and role
         dispatch(login({ username, email, token }));
-
-        // Redirect to dashboard
-        router.push("/dashboard");
+  
+        // Redirect based on role
+        if (role === "admin") {
+          router.push("/admindashboard");
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         setError(response.data.msg || "Something went wrong");
       }
@@ -63,8 +67,7 @@ const Login = () => {
       setLoading(false);
     }
   };
-
-  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null); // Clear the error when user types
     setter(e.target.value);
   };

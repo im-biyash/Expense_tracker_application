@@ -1,5 +1,5 @@
-'use client';
-import React, { useEffect, useState } from "react";
+"use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "../components/ui/button";
 import { ModeToggle } from "../components/Mode-toogle";
@@ -20,16 +20,27 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen((prevOpen: boolean) => !prevOpen);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = parseJwt(token);
-      if (decodedToken && Date.now() < decodedToken.exp * 1000 && decodedToken.username && decodedToken.email) {
-        dispatch(login({ username: decodedToken.username, email: decodedToken.email, token }));
+      if (
+        decodedToken &&
+        Date.now() < decodedToken.exp * 1000 &&
+        decodedToken.username &&
+        decodedToken.email
+      ) {
+        dispatch(
+          login({
+            username: decodedToken.username,
+            email: decodedToken.email,
+            token,
+          })
+        );
       } else {
-        localStorage.removeItem('token');
+        localStorage.removeItem("token");
         dispatch(logout());
       }
     }
@@ -37,19 +48,19 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      setLoading(true); // Start loading
-      localStorage.removeItem('token');
+      setLoading(true);
+      localStorage.removeItem("token");
       dispatch(logout());
 
       // Simulate a delay to show the loader
       setTimeout(() => {
-        router.push('/');
-        setIsMenuOpen(false); // Close menu after logout
-        setLoading(false); // Stop loading
-      }, 2000); // 2 seconds delay
+        router.push("/");
+        setIsMenuOpen(false);
+        setLoading(false);
+      }, 2000);
     } catch (error) {
-      console.error('Logout Error:', error);
-      setLoading(false); // Stop loading on error
+      console.error("Logout Error:", error);
+      setLoading(false);
     }
   };
 
@@ -66,41 +77,25 @@ const Navbar = () => {
           <Image src={mylogo} alt="Logo" width={60} height={60} />
         </div>
         <ul className="hidden md:flex flex-grow justify-center gap-6 font-serif">
-          <li className="hover:text-blue-500 transition-colors duration-300">
+          <li>
             <Link href="/">Home</Link>
           </li>
-          <li className="hover:text-blue-500 transition-colors duration-300">
+          <li>
             <Link href="/about">About</Link>
           </li>
           {isLoggedIn && (
             <>
-              <li className="hover:text-blue-500 transition-colors duration-300">
+              <li>
                 <Link href="/dashboard">Dashboard</Link>
               </li>
-              <li className="hover:text-blue-500 transition-colors duration-300">
+              <li>
                 <Link href="/transcationlogs">Transaction logs</Link>
               </li>
             </>
           )}
         </ul>
-        <div className="hidden md:flex gap-2 p-2 mr-3">
-          {!isLoggedIn ? (
-            <>
-              <Button variant="default" onClick={() => router.push('/login')}>
-                Login
-              </Button>
-              <Button variant="default" onClick={() => router.push('/signup')}>
-                Signup
-              </Button>
-            </>
-          ) : (
-            <Button variant="default" onClick={handleLogout}>
-              Logout
-            </Button>
-          )}
-        </div>
         <div className=" flex items-center gap-4">
-          <ModeToggle  />
+          <ModeToggle />
           <button
             onClick={toggleMenu}
             className="hover:text-blue-500 transition-colors duration-300"
@@ -112,31 +107,57 @@ const Navbar = () => {
 
       {isMenuOpen && (
         <ul className="md:hidden flex flex-col items-center gap-4 mt-4">
-          <li className="py-2 hover:text-blue-500 transition-colors duration-300" onClick={() => setIsMenuOpen(false)}>
+          <li
+            className="py-2 hover:text-blue-500 transition-colors duration-300"
+            onClick={() => setIsMenuOpen(false)}
+          >
             <Link href="/">Home</Link>
           </li>
-          <li className="py-2 hover:text-blue-500 transition-colors duration-300" onClick={() => setIsMenuOpen(false)}>
+          <li
+            className="py-2 hover:text-blue-500 transition-colors duration-300"
+            onClick={() => setIsMenuOpen(false)}
+          >
             <Link href="/about">About</Link>
           </li>
           {!isLoggedIn ? (
             <>
-              <li className="py-2" onClick={() => { router.push('/login'); setIsMenuOpen(false); }}>
+              <li
+                className="py-2"
+                onClick={() => {
+                  router.push("/login");
+                  setIsMenuOpen(false);
+                }}
+              >
                 <Button variant="default">Login</Button>
               </li>
-              <li className="py-2" onClick={() => { router.push('/signup'); setIsMenuOpen(false); }}>
+              <li
+                className="py-2"
+                onClick={() => {
+                  router.push("/signup");
+                  setIsMenuOpen(false);
+                }}
+              >
                 <Button variant="default">Signup</Button>
               </li>
             </>
           ) : (
             <>
-              <li className="py-2 hover:text-blue-500 transition-colors duration-300" onClick={() => setIsMenuOpen(false)}>
+              <li
+                className="py-2 hover:text-blue-500 transition-colors duration-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <Link href="/dashboard">Dashboard</Link>
               </li>
-              <li className="py-2 hover:text-blue-500 transition-colors duration-300" onClick={() => setIsMenuOpen(false)}>
+              <li
+                className="py-2 hover:text-blue-500 transition-colors duration-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <Link href="/transcationlogs">Transaction logs</Link>
               </li>
               <li className="py-2">
-                <Button variant="default" onClick={handleLogout}>Logout</Button>
+                <Button variant="default" onClick={handleLogout}>
+                  Logout
+                </Button>
               </li>
             </>
           )}
