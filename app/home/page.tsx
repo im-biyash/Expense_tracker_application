@@ -40,11 +40,11 @@ const Home = () => {
           <Image
             src={expense}
             alt="Expense Tracker"
-            width="0" // Ensure these dimensions match the actual image size
+            width="0" 
             height="0"
             className="w-auto h-[400px] rounded-lg shadow-lg"
             priority
-            // Add this line
+            
           />
         </div>
       </div>
