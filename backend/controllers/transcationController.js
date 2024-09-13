@@ -1,4 +1,4 @@
-const Transaction = require("../models/transcationModel")
+const Transaction = require("../models/transcationmodel")
 const jwt = require("jsonwebtoken");
 
 // Add a transaction
