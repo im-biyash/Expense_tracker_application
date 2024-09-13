@@ -16,9 +16,9 @@ const Home = () => {
       console.error("Navigation failed:", error);
     }
   };
-
+ 
   return (
-    <div className="h-80vh flex flex-col justify-center items-center p-6">
+    <div className="h-[100vh] flex flex-col justify-center items-center p-4">
       <div className="flex flex-col md:flex-row items-center gap-6 justify-evenly w-full h-full">
         {/* Left Side */}
         <div className="flex flex-col items-start max-w-lg text-center md:text-left mb-11">

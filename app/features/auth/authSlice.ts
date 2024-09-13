@@ -4,6 +4,7 @@ interface AuthState {
   username: string | null;
   email: string | null;
   token: string | null;
+  role: string | null;
   isLoggedIn: boolean;
 }
 
@@ -15,6 +16,7 @@ const getInitialState = (): AuthState => {
       username: null,
       email: null,
       token: null,
+      role: null,
       isLoggedIn: false,
     };
   }
@@ -24,6 +26,7 @@ const getInitialState = (): AuthState => {
     username: token ? localStorage.getItem('username') : null,
     email: token ? localStorage.getItem('email') : null,
     token: token,
+    role: token ? localStorage.getItem('role') : null,
     isLoggedIn: !!token,
   };
 };
@@ -34,29 +37,33 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login(state, action: PayloadAction<{ username?: string; email?: string; token?: string }>) {
-      const { username = null, email = null, token = null } = action.payload || {};
+    login(state, action: PayloadAction<{ username?: string; email?: string; token?: string; role?: string }>) {
+      const { username = null, email = null, token = null, role = null } = action.payload || {};
       state.username = username;
       state.email = email;
       state.token = token;
+      state.role = role;
       state.isLoggedIn = true;
 
       if (typeof window !== 'undefined' && token) {
         localStorage.setItem('token', token);
         localStorage.setItem('username', username || '');
         localStorage.setItem('email', email || '');
+        localStorage.setItem('role', role || '');
       }
     },
     logout(state) {
       state.username = null;
       state.email = null;
       state.token = null;
+      state.role = null;
       state.isLoggedIn = false;
 
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('email');
+        localStorage.removeItem('role');
       }
     },
   },

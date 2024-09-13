@@ -51,11 +51,10 @@ const Login = () => {
         // Dispatch login action with username, email, token, and role
         dispatch(login({ username, email, token }));
   
-        // Redirect based on role
-        if (role === "admin") {
-          router.push("/admindashboard");
+        if (role === 'admin') {
+          router.push('/adminDashboardPage');
         } else {
-          router.push("/dashboard");
+          router.push('/dashboard');
         }
       } else {
         setError(response.data.msg || "Something went wrong");

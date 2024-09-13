@@ -1,32 +1,56 @@
 import React, { ComponentType, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store'; // Adjust the path to your store
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { login } from '../features/auth/authSlice';
+import { parseJwt } from '../utils/parseJwt';
 
-const withAuth = <P extends object>(WrappedComponent: ComponentType<P>) => {
+const withAuth = <P extends object>(WrappedComponent: ComponentType<P>, adminRequired = false) => {
   const AuthComponent = (props: P) => {
     const router = useRouter();
-    const [loading, setLoading] = useState(true); // Loading state
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
     const isAuthenticated = useSelector((state: RootState) => state.auth.isLoggedIn);
+    const role = useSelector((state: RootState) => state.auth.role);
 
     useEffect(() => {
-      if (!isAuthenticated) {
-        router.push('/login');
-      } else {
-        setLoading(false); // Set loading to false once authentication is checked
-      }
-    }, [isAuthenticated, router]);
+      const checkAuth = async () => {
+        if (typeof window === "undefined") return;
 
-    // Render a loading indicator while checking authentication
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            const decodedToken = parseJwt(token);
+            if (decodedToken && decodedToken.exp > Date.now() / 1000) {
+              dispatch(login({ username: decodedToken.username, email: decodedToken.email, token, role: decodedToken.role }));
+              if (adminRequired && role !== 'admin') {
+                router.push('/dashboard');
+              } else {
+                setLoading(false);
+              }
+            } else {
+              localStorage.removeItem('token');
+              router.push('/login');
+            }
+          } catch (error) {
+            localStorage.removeItem('token');
+            router.push('/login');
+          }
+        } else {
+          router.push('/login');
+        }
+      };
+
+      checkAuth();
+    }, [dispatch, router, role]);
+
     if (loading) {
-      return <div>Loading...</div>; // or use a spinner/loading component
+      return <div>Loading...</div>;
     }
 
-    // Only render the wrapped component if authenticated
     return isAuthenticated ? <WrappedComponent {...props} /> : null;
   };
 
-  // Add display name for better debugging in React DevTools
   AuthComponent.displayName = `WithAuth(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
 
   return AuthComponent;
