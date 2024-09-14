@@ -16,6 +16,8 @@ const Dashboard = () => {
 
   const username = useSelector((state: RootState) => state.auth.username);
 
+  const url = "https://expense-tracker-application-backend.onrender.com"
+
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
@@ -27,7 +29,7 @@ const Dashboard = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:3001/api/transaction/get",
+          `${url}/api/transaction/get`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

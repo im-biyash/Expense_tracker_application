@@ -23,6 +23,8 @@ const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+
+  const url  ="https://expense-tracker-application-backend.onrender.com"
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
@@ -35,7 +37,7 @@ const Login = () => {
   
     try {
       const response = await axios.post(
-        "http://localhost:3001/api/user/login",
+        `${url}/api/user/login`,
         { email, password }
       );
   

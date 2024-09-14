@@ -12,11 +12,11 @@ const AdminDashboard = () => {
   const [error, setError] = useState<string | null>(null);
 
   const token = useSelector((state: RootState) => state.auth.token);
-
+ const url = "https://expense-tracker-application-backend.onrender.com/"
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/user/all', {
+        const response = await axios.get(`{url}/api/user/all`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         // Exclude admin users

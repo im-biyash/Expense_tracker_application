@@ -21,6 +21,8 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const url = "https://expense-tracker-application-backend.onrender.com"
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
@@ -33,7 +35,7 @@ const Signup = () => {
     setLoading(true); // Start loading
 
     try {
-      const response = await axios.post('http://localhost:3001/api/user/signup', {
+      const response = await axios.post(`{url}/api/user/signup`, {
         username,
         email,
         password,
