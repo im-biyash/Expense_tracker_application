@@ -25,6 +25,7 @@ const fetchTransactions = async (): Promise<any[]> => {
 const Dashboard = () => {
   const username = useSelector((state: RootState) => state.auth.username);
 
+<<<<<<< HEAD
   // React Query hook to fetch transactions
   const {
     data: transactions = [],
@@ -51,12 +52,58 @@ const Dashboard = () => {
           break;
         default:
           break;
+=======
+  const url = "https://expense-tracker-application-backend.onrender.com"
+
+  useEffect(() => {
+    const fetchTransactionData = async () => {
+      try {
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        if (!token) {
+          setError("You must be logged in to view transactions.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get(
+          `${url}/api/transaction/get`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const transactions = response.data.transactions;
+
+        // Calculate the totals for income, expense, and investment
+        const totalIncome = transactions
+          .filter((t: any) => t.type === "income")
+          .reduce((sum: number, t: any) => sum + t.amount, 0);
+
+        const totalExpense = transactions
+          .filter((t: any) => t.type === "expense")
+          .reduce((sum: number, t: any) => sum + t.amount, 0);
+
+        const totalInvestment = transactions
+          .filter((t: any) => t.type === "investment")
+          .reduce((sum: number, t: any) => sum + t.amount, 0);
+
+        setIncome(totalIncome);
+        setExpense(totalExpense);
+        setInvestment(totalInvestment);
+      } catch (error: any) {
+        setError(error.response?.data?.msg || error.message);
+      } finally {
+        setLoading(false);
+>>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
       }
       return acc;
     },
     { income: 0, expense: 0, investment: 0 }
   );
 
+<<<<<<< HEAD
   if (isLoading) return <p>Loading...</p>;
   if (isError)
     return (
@@ -64,6 +111,13 @@ const Dashboard = () => {
         Error: {error instanceof Error ? error.message : "An error occurred"}
       </p>
     );
+=======
+    fetchTransactionData();
+  }, [income]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+>>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
 
   return (
     <div className="flex flex-col min-h-[100vh] p-4">

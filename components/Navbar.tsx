@@ -1,28 +1,29 @@
-'use client';
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button } from "../components/ui/button";
-import { ModeToggle } from "../components/Mode-toogle";
-import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../app/store";
-import { login, logout } from "../app/features/auth/authSlice";
-import { FaBars } from "react-icons/fa";
-import { parseJwt } from "../app/utils/parseJwt";
-import mylogo from "../app/assets/mylogo.png";
-import Image from "next/image";
-import { RingLoader } from "react-spinners";
+
+'use client'
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Button } from '../components/ui/button';
+import { ModeToggle } from '../components/Mode-toogle';
+import { useRouter } from 'next/navigation';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from "../app/store";// Adjust the path to your store
+import { login, logout } from '../app/features/auth/authSlice';
+import { FaBars } from 'react-icons/fa';
+import { parseJwt } from '../app/utils/parseJwt';
+import mylogo from '../app/assets/mylogo.png';
+import Image from 'next/image';
+import { RingLoader } from 'react-spinners';
 
 const Navbar = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const [isClient, setIsClient] = useState(false); // Track if we are on the client side
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   useEffect(() => {
+    setIsClient(true); // Set client-side flag
     const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = parseJwt(token);
@@ -40,8 +41,6 @@ const Navbar = () => {
       setLoading(true); // Start loading
       localStorage.removeItem('token');
       dispatch(logout());
-
-      // Simulate a delay to show the loader
       setTimeout(() => {
         router.push('/');
         setIsMenuOpen(false); // Close menu after logout
@@ -52,6 +51,11 @@ const Navbar = () => {
       setLoading(false); // Stop loading on error
     }
   };
+
+  // Render nothing on the server side until the client-side flag is set
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="p-2 bg-gray-100 dark:bg-gray-900 shadow relative">
@@ -99,12 +103,9 @@ const Navbar = () => {
             </Button>
           )}
         </div>
-        <div className=" flex items-center gap-4">
-          <ModeToggle  /> {/* Add margin to ModeToggle */}
-          <button
-            onClick={toggleMenu}
-            className="hover:text-blue-500 transition-colors duration-300"
-          >
+        <div className="md:hidden flex items-center">
+          <ModeToggle />
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hover:text-blue-500 transition-colors duration-300">
             <FaBars className="w-6 h-6 text-white" />
           </button>
         </div>
@@ -136,7 +137,9 @@ const Navbar = () => {
                 <Link href="/transcationlogs">Transaction logs</Link>
               </li>
               <li className="py-2">
-                <Button variant="default" onClick={handleLogout}>Logout</Button>
+                <Button variant="default" onClick={handleLogout}>
+                  Logout
+                </Button>
               </li>
             </>
           )}

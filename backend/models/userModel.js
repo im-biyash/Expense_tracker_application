@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { type } = require('os');
+
 const Schema  = mongoose.Schema;
 
 
@@ -18,7 +18,13 @@ const userSchema  = new Schema ({
     password:{
         type:String,
         required:true
+    },
+    role:{
+        type:String,
+        enum:['admin','user'],
+        default:'user'
     }
+  
 })
 
 module.exports= mongoose.model('User',userSchema)

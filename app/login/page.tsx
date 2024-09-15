@@ -36,6 +36,7 @@ const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+<<<<<<< HEAD
   const url = "https://expense-tracker-application-backend.onrender.com";
 
   // Define the mutation function
@@ -77,10 +78,18 @@ const Login = () => {
     e.preventDefault();
     console.log("Form submitted with email:", email, "password:", password); // Debug log
 
+=======
+
+  const url  ="https://expense-tracker-application-backend.onrender.com"
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  
+>>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
     if (!email || !password) {
       setError("Both fields are required");
       return;
     }
+<<<<<<< HEAD
     setLoading(true); 
     mutation.mutate({ email, password });
   };
@@ -88,6 +97,45 @@ const Login = () => {
   const handleInputChange = (
     setter: React.Dispatch<React.SetStateAction<string>>
   ) => (e: React.ChangeEvent<HTMLInputElement>) => {
+=======
+  
+    setLoading(true);
+  
+    try {
+      const response = await axios.post(
+        `${url}/api/user/login`,
+        { email, password }
+      );
+  
+      if (response.status === 200) {
+        console.log("Login successful:", response.data);
+        const { username, email, token, role } = response.data;
+  
+        // Only access localStorage if in the browser environment
+        if (typeof window !== "undefined") {
+          localStorage.setItem("token", token);
+        }
+  
+        // Dispatch login action with username, email, token, and role
+        dispatch(login({ username, email, token }));
+  
+        if (role === 'admin') {
+          router.push('/adminDashboardPage');
+        } else {
+          router.push('/dashboard');
+        }
+      } else {
+        setError(response.data.msg || "Something went wrong");
+      }
+    } catch (error: any) {
+      console.error("Login Error:", error);
+      setError(error.response?.data?.msg || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+    const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+>>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
     setError(null); // Clear the error when user types
     setter(e.target.value);
   };

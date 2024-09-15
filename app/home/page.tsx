@@ -17,7 +17,7 @@ const Home = () => {
   };
 
   return (
-    <div className="h-80vh flex flex-col justify-center items-center p-6">
+    <div className="h-[80vh] flex flex-col justify-center items-center p-6">
       <div className="flex flex-col md:flex-row items-center gap-6 justify-evenly w-full h-full">
         {/* Left Side */}
         <div className="flex flex-col items-start max-w-lg text-center md:text-left mb-11">
@@ -40,11 +40,11 @@ const Home = () => {
           <Image
             src={expense}
             alt="Expense Tracker"
-            width="0" // Ensure these dimensions match the actual image size
+            width="0" 
             height="0"
             className="w-auto h-[400px] rounded-lg shadow-lg"
             priority
-            // Add this line
+            
           />
         </div>
       </div>

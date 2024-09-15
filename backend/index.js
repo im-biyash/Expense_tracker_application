@@ -6,7 +6,7 @@ const userRoutes = require('./routes/user');
 const transactionRoutes = require('./routes/transcation')
 const app = express();
 const bodyParser = require("body-parser")
-
+const  port = process.env.PORT || 3001
 // Configure CORS
 app.use(cors({
   origin: 'http://localhost:3000', // Your frontend URL
@@ -30,6 +30,6 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(3001, () => {
+app.listen(port, () => {
   console.log('App is listening on port 3001');
 });

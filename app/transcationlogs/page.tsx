@@ -24,7 +24,7 @@ const Page = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+const url = "https://expense-tracker-application-backend.onrender.com"
   useEffect(() => {
     const fetchTransactions = async () => {
       if (typeof window !== "undefined") {
@@ -36,7 +36,7 @@ const Page = () => {
         }
 
         try {
-          const response = await axios.get("http://localhost:3001/api/transaction/get", {
+          const response = await axios.get(`${url}/api/transaction/get`, {
             headers: {
               Authorization: `Bearer ${token}`, // Include token in headers
             },

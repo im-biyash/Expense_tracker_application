@@ -22,6 +22,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+<<<<<<< HEAD
   const url = "https://expense-tracker-application-backend.onrender.com";
 
   const signupFunction = async (data: {
@@ -46,6 +47,9 @@ const Signup = () => {
       setError("Signup failed. Please try again.");
     },
   });
+=======
+  const url = "https://expense-tracker-application-backend.onrender.com"
+>>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
@@ -59,11 +63,32 @@ const Signup = () => {
     setLoading(true); // Start loading manually
 
     try {
+<<<<<<< HEAD
       // Trigger the mutation manually
       mutation.mutate({ username, email, password });
     } catch (error) {
       console.error("Signup error:", error);
       setError("Signup failed. Please try again.");
+=======
+      const response = await axios.post(`{url}/api/user/signup`, {
+        username,
+        email,
+        password,
+      });
+
+      // Handle successful signup
+      console.log('Signup successful:', response.data);
+      router.push('/login'); // Redirect to login page
+    } catch (error: any) {
+      console.error('Signup Error:', error);
+
+      // Check if error response contains a message
+      if (error.response && error.response.data) {
+        setError(error.response.data.msg || 'An error occurred during signup');
+      } else {
+        setError('An error occurred during signup');
+      }
+>>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
     } finally {
       setLoading(false); // Stop loading manually after API call is done
     }
