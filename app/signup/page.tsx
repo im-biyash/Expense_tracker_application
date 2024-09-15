@@ -4,14 +4,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
   Card,
-  CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardContent,
+  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RingLoader } from "react-spinners";
+import { useMutation } from "@tanstack/react-query";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -21,38 +22,50 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const url = "https://expense-tracker-application-backend.onrender.com";
+
+  const signupFunction = async (data: {
+    username: string;
+    email: string;
+    password: string;
+  }) => {
+    // Send the request to your backend
+    const response = await axios.post(`${url}/api/user/signup`, data);
+    return response.data;
+  };
+
+  // Use mutation for handling API request
+  const mutation = useMutation({
+    mutationFn: signupFunction,
+    onSuccess: (data) => {
+      console.log("Signup successful:", data);
+      router.push("/login"); // Redirect to login page
+    },
+    onError: (error: any) => {
+      console.error("Signup error:", error);
+      setError("Signup failed. Please try again.");
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
 
     // Basic client-side validation
     if (!username || !email || !password) {
-      setError('All fields are required');
+      setError("All fields are required");
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true); // Start loading manually
 
     try {
-      const response = await axios.post('http://localhost:3001/api/user/signup', {
-        username,
-        email,
-        password,
-      });
-
-      // Handle successful signup
-      console.log('Signup successful:', response.data);
-      router.push('/login'); // Redirect to login page
-    } catch (error: any) {
-      console.error('Signup Error:', error);
-
-      // Check if error response contains a message
-      if (error.response && error.response.data) {
-        setError(error.response.data.msg || 'An error occurred during signup');
-      } else {
-        setError('An error occurred during signup');
-      }
+      // Trigger the mutation manually
+      mutation.mutate({ username, email, password });
+    } catch (error) {
+      console.error("Signup error:", error);
+      setError("Signup failed. Please try again.");
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false); // Stop loading manually after API call is done
     }
   };
 
@@ -98,7 +111,7 @@ const Signup = () => {
           </CardContent>
           {error && <p className="text-red-500 text-center">{error}</p>}
           <CardFooter className="flex flex-col w-full gap-2 justify-center">
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={loading}>
               Register
             </Button>
             <p>

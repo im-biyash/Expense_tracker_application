@@ -120,11 +120,11 @@ const Navbar = () => {
           </li>
           {!isLoggedIn ? (
             <>
-              <li className="py-2" onClick={() => { router.push('/login'); setIsMenuOpen(false); }}>
-                <Button variant="default">Login</Button>
+              <li className="py-2" >
+                <Button variant="default" onClick={() => { router.push('/login'); setIsMenuOpen(false); }}>Login</Button>
               </li>
-              <li className="py-2" onClick={() => { router.push('/signup'); setIsMenuOpen(false); }}>
-                <Button variant="default">Signup</Button>
+              <li className="py-2" >
+                <Button variant="default" onClick={() => { router.push('/signup'); setIsMenuOpen(false); }}>Signup</Button>
               </li>
             </>
           ) : (

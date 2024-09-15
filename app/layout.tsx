@@ -6,7 +6,13 @@ import { ThemeProvider } from "@/components/theme-provider";
 import ClientLayout from "./clinetLayout"; // Make sure the import path is correct
 import { Toaster } from "@/components/ui/sonner"
 
+
+import Providers from "./providers";
+
+
 const inter = Inter({ subsets: ["latin"] });
+
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning={true}>
       <body >
+    
       <Toaster />
         <ClientLayout>
         <ThemeProvider
@@ -30,9 +37,13 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Navbar />
+            <Providers>
+
             {children}
+            </Providers>
           </ThemeProvider>
         </ClientLayout>
+       
       </body>
     </html>
   );
