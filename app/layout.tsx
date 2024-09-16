@@ -3,16 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import ClientLayout from "./clinetLayout"; // Make sure the import path is correct
+import ClientLayout from "./clinetLayout"; // Ensure the import path is correct
 import { Toaster } from "@/components/ui/sonner";
-
-
 import Providers from "./providers";
 
-
 const inter = Inter({ subsets: ["latin"] });
-
-
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,16 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-<<<<<<< HEAD
     <html lang="en" suppressHydrationWarning={true}>
-      <body >
-    
-      <Toaster />
-=======
-    <html lang="en" >
-      <body>
+      <body className={inter.className}>
         <Toaster />
->>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
         <ClientLayout>
           <ThemeProvider
             attribute="class"
@@ -42,18 +30,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-<<<<<<< HEAD
             <Navbar />
             <Providers>
-
-=======
-            <Navbar /> {/* Moved Navbar inside ThemeProvider */}
->>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
-            {children}
+              {children}
             </Providers>
           </ThemeProvider>
         </ClientLayout>
-       
       </body>
     </html>
   );

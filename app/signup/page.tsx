@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -22,34 +22,33 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-<<<<<<< HEAD
   const url = "https://expense-tracker-application-backend.onrender.com";
 
-  const signupFunction = async (data: {
-    username: string;
-    email: string;
-    password: string;
-  }) => {
-    // Send the request to your backend
+  // Signup function to make API call
+  const signupFunction = async (data: { username: string; email: string; password: string }) => {
     const response = await axios.post(`${url}/api/user/signup`, data);
     return response.data;
   };
 
-  // Use mutation for handling API request
+  // Use mutation for handling signup
   const mutation = useMutation({
     mutationFn: signupFunction,
     onSuccess: (data) => {
       console.log("Signup successful:", data);
       router.push("/login"); // Redirect to login page
     },
-    onError: (error: any) => {
-      console.error("Signup error:", error);
-      setError("Signup failed. Please try again.");
+    onError: (err: any) => {
+      console.error("Signup error:", err);
+      setError(err.response?.data?.message || "An error occurred");
+      setLoading(false); // Stop loading on error
+    },
+    onMutate: () => {
+      setLoading(true); // Start loading when mutation starts
+    },
+    onSettled: () => {
+      setLoading(false); // Stop loading when mutation is settled
     },
   });
-=======
-  const url = "https://expense-tracker-application-backend.onrender.com"
->>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default form submission
@@ -60,38 +59,8 @@ const Signup = () => {
       return;
     }
 
-    setLoading(true); // Start loading manually
-
-    try {
-<<<<<<< HEAD
-      // Trigger the mutation manually
-      mutation.mutate({ username, email, password });
-    } catch (error) {
-      console.error("Signup error:", error);
-      setError("Signup failed. Please try again.");
-=======
-      const response = await axios.post(`{url}/api/user/signup`, {
-        username,
-        email,
-        password,
-      });
-
-      // Handle successful signup
-      console.log('Signup successful:', response.data);
-      router.push('/login'); // Redirect to login page
-    } catch (error: any) {
-      console.error('Signup Error:', error);
-
-      // Check if error response contains a message
-      if (error.response && error.response.data) {
-        setError(error.response.data.msg || 'An error occurred during signup');
-      } else {
-        setError('An error occurred during signup');
-      }
->>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
-    } finally {
-      setLoading(false); // Stop loading manually after API call is done
-    }
+    // Trigger the mutation with form data
+    mutation.mutate({ username, email, password });
   };
 
   return (
@@ -137,10 +106,13 @@ const Signup = () => {
           {error && <p className="text-red-500 text-center">{error}</p>}
           <CardFooter className="flex flex-col w-full gap-2 justify-center">
             <Button type="submit" className="w-full" disabled={loading}>
-              Register
+              {loading ? "Registering..." : "Register"}
             </Button>
             <p>
-              Already have an account? <a href="/login">Login</a>
+              Already have an account?{" "}
+              <a href="/login" className="text-blue-500 hover:underline">
+                Login
+              </a>
             </p>
           </CardFooter>
         </form>

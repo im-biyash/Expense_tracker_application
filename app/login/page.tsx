@@ -2,6 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { RingLoader } from "react-spinners";
 import {
   Card,
   CardContent,
@@ -14,8 +15,9 @@ import { login } from "../features/auth/authSlice";
 import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
-import { RingLoader } from "react-spinners";
+import { toast } from "sonner";
 
+// Define interfaces for request and response data
 interface LoginRequestData {
   email: string;
   password: string;
@@ -36,25 +38,23 @@ const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
-<<<<<<< HEAD
   const url = "https://expense-tracker-application-backend.onrender.com";
 
-  // Define the mutation function
-  const loginFunction = async (data: LoginRequestData)  => {
-    console.log("Login function called with data:", data); // Debug log
+  // Login function to make API call
+  const loginFunction = async (data: LoginRequestData) => {
     const response = await axios.post<LoginResponseData>(`${url}/api/user/login`, data);
-    console.log("Login response:", response.data); // Debug log
-    return response.data;
+    return response.data; // Return response data
   };
 
-  // Use the mutation hook
+  // Use mutation for handling login
   const mutation = useMutation({
     mutationFn: loginFunction,
     onSuccess: (data) => {
-      console.log("Login successful with data:", data); // Debug log
       const { username, email, token, role } = data;
+      
+      // Store token in localStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem("token", token); // Store token in localStorage
+        localStorage.setItem("token", token);
       }
 
       // Dispatch the login action
@@ -67,87 +67,49 @@ const Login = () => {
         router.push("/dashboard");
       }
     },
-    onError: (error: Error) => {
-      console.error("Login error:", error); // Debug log
-      setError("An unexpected error occurred");
+    onError: (err: any) => {
+      console.error("Login error:", err);
+      setError(err.response?.data?.message || "An error occurred");
+      setLoading(false); // Stop loading on error
+      toast.error("Login failed. Please try again."); // Show error toast
+    },
+    onMutate: () => {
+      setLoading(true); // Start loading when mutation starts
+    },
+    onSettled: () => {
+      setLoading(false); // Stop loading when mutation is settled
     },
   });
 
   // Form submission handler
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted with email:", email, "password:", password); // Debug log
 
-=======
-
-  const url  ="https://expense-tracker-application-backend.onrender.com"
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  
->>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
     if (!email || !password) {
       setError("Both fields are required");
       return;
     }
-<<<<<<< HEAD
-    setLoading(true); 
+
+    // Trigger the mutation
     mutation.mutate({ email, password });
   };
 
   const handleInputChange = (
     setter: React.Dispatch<React.SetStateAction<string>>
   ) => (e: React.ChangeEvent<HTMLInputElement>) => {
-=======
-  
-    setLoading(true);
-  
-    try {
-      const response = await axios.post(
-        `${url}/api/user/login`,
-        { email, password }
-      );
-  
-      if (response.status === 200) {
-        console.log("Login successful:", response.data);
-        const { username, email, token, role } = response.data;
-  
-        // Only access localStorage if in the browser environment
-        if (typeof window !== "undefined") {
-          localStorage.setItem("token", token);
-        }
-  
-        // Dispatch login action with username, email, token, and role
-        dispatch(login({ username, email, token }));
-  
-        if (role === 'admin') {
-          router.push('/adminDashboardPage');
-        } else {
-          router.push('/dashboard');
-        }
-      } else {
-        setError(response.data.msg || "Something went wrong");
-      }
-    } catch (error: any) {
-      console.error("Login Error:", error);
-      setError(error.response?.data?.msg || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
-    const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
->>>>>>> 609680c64bf9980ef0e40cb11a05aa46452f7e71
     setError(null); // Clear the error when user types
     setter(e.target.value);
   };
 
   return (
     <div className="flex justify-center items-center h-screen">
-      {loading ? (
-        // Display RingLoader while loading state is true
-        <div className="flex justify-center items-center">
-          <RingLoader size={150} color={"#123abc"} loading={loading} />
+      {loading && ( // Use loading state for the loader
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50">
+          <RingLoader color="#36d68f" size={150} speedMultiplier={1.5} />
         </div>
-      ) : (
+      )}
+
+      {!loading && (
         <Card className="w-80 h-[400px] rounded-xl border-blue-300 p-2">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Login</CardTitle>
@@ -176,8 +138,8 @@ const Login = () => {
             </CardContent>
             {error && <p className="text-red-500 text-center">{error}</p>}
             <CardFooter className="flex flex-col w-full gap-2 justify-center">
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Loading..." : "Login"}
               </Button>
               <p className="text-center">
                 Don&apos;t have an account?{" "}
