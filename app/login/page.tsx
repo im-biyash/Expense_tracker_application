@@ -11,11 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { login } from "../features/auth/authSlice";
 import { Button } from "@/components/ui/button";
-import { useDispatch } from "react-redux";
+
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+import useAuthStore from './../stores/authStore';
 
 // Define interfaces for request and response data
 interface LoginRequestData {
@@ -36,10 +37,13 @@ const Login = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const dispatch = useDispatch();
-
+  
+  
+  const login = useAuthStore(
+    (state) => state.login
+  );
   const url = "https://expense-tracker-application-backend.onrender.com";
-
+  
   // Login function to make API call
   const loginFunction = async (data: LoginRequestData) => {
     const response = await axios.post<LoginResponseData>(`${url}/api/user/login`, data);
@@ -58,7 +62,7 @@ const Login = () => {
       }
 
       // Dispatch the login action
-      dispatch(login({ username, email, token }));
+    login({ username, email, token ,role});
 
       // Redirect based on user role
       if (role === "admin") {

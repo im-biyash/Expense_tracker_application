@@ -27,7 +27,7 @@ const Signup = () => {
   // Signup function to make API call
   const signupFunction = async (data: { username: string; email: string; password: string }) => {
     const response = await axios.post(`${url}/api/user/signup`, data);
-    return response.data;
+    return response.data;        
   };
 
   // Use mutation for handling signup
@@ -37,6 +37,7 @@ const Signup = () => {
       console.log("Signup successful:", data);
       router.push("/login"); // Redirect to login page
     },
+           
     onError: (err: any) => {
       console.error("Signup error:", err);
       setError(err.response?.data?.message || "An error occurred");

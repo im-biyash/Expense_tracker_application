@@ -1,26 +1,23 @@
-
 'use client'
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '../components/ui/button';
 import { ModeToggle } from '../components/Mode-toogle';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from "../app/store";// Adjust the path to your store
-import { login, logout } from '../app/features/auth/authSlice';
 import { FaBars } from 'react-icons/fa';
 import { parseJwt } from '../app/utils/parseJwt';
 import mylogo from '../app/assets/mylogo.png';
 import Image from 'next/image';
 import { RingLoader } from 'react-spinners';
+import useAuthStore from './../app/stores/authStore';
 
 const Navbar = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false); // Track if we are on the client side
-  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
+  const {  isLoggedIn, login, logout } = useAuthStore();
 
   useEffect(() => {
     setIsClient(true); // Set client-side flag
@@ -28,19 +25,24 @@ const Navbar = () => {
     if (token) {
       const decodedToken = parseJwt(token);
       if (decodedToken && Date.now() < decodedToken.exp * 1000 && decodedToken.username && decodedToken.email) {
-        dispatch(login({ username: decodedToken.username, email: decodedToken.email, token }));
+        login({ 
+          username: decodedToken.username, 
+          email: decodedToken.email, 
+          token, 
+          role: decodedToken.role || 'user' 
+        });
       } else {
         localStorage.removeItem('token');
-        dispatch(logout());
+        logout();
       }
     }
-  }, [dispatch]);
+  }, [login, logout]);
 
   const handleLogout = async () => {
     try {
       setLoading(true); // Start loading
       localStorage.removeItem('token');
-      dispatch(logout());
+      logout(); // Use Zustand's logout function
       setTimeout(() => {
         router.push('/');
         setIsMenuOpen(false); // Close menu after logout
@@ -121,10 +123,10 @@ const Navbar = () => {
           </li>
           {!isLoggedIn ? (
             <>
-              <li className="py-2" >
+              <li className="py-2">
                 <Button variant="default" onClick={() => { router.push('/login'); setIsMenuOpen(false); }}>Login</Button>
               </li>
-              <li className="py-2" >
+              <li className="py-2">
                 <Button variant="default" onClick={() => { router.push('/signup'); setIsMenuOpen(false); }}>Signup</Button>
               </li>
             </>
