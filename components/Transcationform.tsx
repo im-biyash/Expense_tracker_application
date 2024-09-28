@@ -1,6 +1,5 @@
-"use client";
 import React, { useState } from "react";
-import axios from "axios"; // Add axios for making HTTP requests
+import axios from "axios";
 import {
   Card,
   CardContent,
@@ -18,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
+
 const Transcationform = () => {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
@@ -27,6 +27,7 @@ const Transcationform = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const route = useRouter();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -37,42 +38,32 @@ const Transcationform = () => {
       return;
     }
 
-    setLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("You must be logged in to add a transaction");
+      return;
+    }
+
+    setLoading(true); // Move this down to ensure it's set only if token exists.
 
     try {
-      // Get the token from localStorage
-      const token = localStorage.getItem("token");
-      console.log("Token:", token); // Log the token to verify
-
-      if (!token) {
-        setError("You must be logged in to add a transaction");
-        return;
-      }
-
       const response = await axios.post(
-        "http://localhost:3001/api/transaction/add",
+        "https://expense-tracker-application-backend.onrender.com/api/transaction/add",
         { amount, type, description, date },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add token to request headers
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      console.log("Response Data:", response.data); // Log response data
-
       setSuccess(response.data.msg || "Transaction added successfully");
 
-      // Clear form fields
       setAmount("");
       setType("");
       setDescription("");
       setDate("");
     } catch (error: any) {
-      console.error(
-        "Add Transaction Error:",
-        error.response?.data || error.message
-      ); // Log error
       setError(error.response?.data?.msg || "An unexpected error occurred");
     } finally {
       setLoading(false);

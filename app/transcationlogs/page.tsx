@@ -1,8 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; // Assuming you're using a Button component
+
+import { useQuery } from "@tanstack/react-query";
 import {
   Table,
   TableBody,
@@ -10,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"; // Import Shadcn UI Table components
+} from "@/components/ui/table";
 
 interface Transaction {
   _id: string;
@@ -20,41 +22,25 @@ interface Transaction {
   date: string;
 }
 
+const fetchTransactions = async (): Promise<Transaction[]> => {
+  const url = "https://expense-tracker-application-backend.onrender.com";
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (!token) throw new Error("You must be logged in to view transactions.");
+
+  const response = await axios.get(`${url}/api/transaction/get`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data.transactions;
+};
+
 const Page = () => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-const url = "https://expense-tracker-application-backend.onrender.com"
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (typeof window !== "undefined") {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You must be logged in to view transactions.");
-          setLoading(false);
-          return;
-        }
+  const { data: transactions, isLoading, isError, error } = useQuery({
+    queryKey: ["transactions"],
+    queryFn: fetchTransactions, // Fixed the duplicate queryFn issue
+  });
 
-        try {
-          const response = await axios.get(`${url}/api/transaction/get`, {
-            headers: {
-              Authorization: `Bearer ${token}`, // Include token in headers
-            },
-          });
-
-          const fetchedTransactions = response.data.transactions || []; // Fallback to an empty array
-          setTransactions(fetchedTransactions);
-        } catch (error: any) {
-          console.error("Fetch Transactions Error:", error);
-          setError("An error occurred while fetching transactions.");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchTransactions();
-  }, []);
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error: {error instanceof Error ? error.message : "An error occurred"}</p>;
 
   return (
     <div className="p-4">
@@ -63,38 +49,30 @@ const url = "https://expense-tracker-application-backend.onrender.com"
           <CardTitle className="text-2xl text-center">Transaction History</CardTitle>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <p>Loading...</p>
-          ) : error ? (
-            <p className="text-red-500 text-center">{error}</p>
-          ) : transactions.length === 0 ? (
-            <p className="text-center">No transactions found.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table className="mx-auto w-3/4">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-base">Amount</TableHead>
-                    <TableHead className="text-base">Type</TableHead>
-                    <TableHead className="text-base">Description</TableHead>
-                    <TableHead className="text-base">Date</TableHead>
+          <div className="overflow-x-auto">
+            <Table className="mx-auto w-3/4">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-base">Amount</TableHead>
+                  <TableHead className="text-base">Type</TableHead>
+                  <TableHead className="text-base">Description</TableHead>
+                  <TableHead className="text-base">Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transactions?.map((transaction) => (
+                  <TableRow key={transaction._id}>
+                    <TableCell className="text-sm">{transaction.amount}</TableCell>
+                    <TableCell className="text-sm">{transaction.type}</TableCell>
+                    <TableCell className="text-sm">{transaction.description}</TableCell>
+                    <TableCell className="text-sm">
+                      {new Date(transaction.date).toLocaleDateString()}
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {transactions.map((transaction) => (
-                    <TableRow key={transaction._id}>
-                      <TableCell className="text-sm">{transaction.amount}</TableCell>
-                      <TableCell className="text-sm">{transaction.type}</TableCell>
-                      <TableCell className="text-sm">{transaction.description}</TableCell>
-                      <TableCell className="text-sm">
-                        {new Date(transaction.date).toLocaleDateString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
         <CardFooter>
           <Button type="button" onClick={() => window.history.back()} className="mx-auto">

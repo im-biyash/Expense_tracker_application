@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import { RootState } from "../store";
+
 import Transcationform from "@/components/Transcationform";
 import DoughnutChart from "@/components/DoughnutChart";
 import withAuth from "../utils/withAuth";
+import useAuthStore from "../../app/stores/authStore"; // Corrected import statement
 
 // Define the function to fetch transactions
 const fetchTransactions = async (): Promise<any[]> => {
@@ -17,12 +17,12 @@ const fetchTransactions = async (): Promise<any[]> => {
   const response = await axios.get(`${url}/api/transaction/get`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data.transactions;
+  return response.data.transactions; // Ensure this matches the expected response structure
 };
 
 // Dashboard component
 const Dashboard = () => {
-  const username = useSelector((state: RootState) => state.auth.username);
+  const { username } = useAuthStore(); // Moved inside the component
 
   // React Query hook to fetch transactions
   const {
