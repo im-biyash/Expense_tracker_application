@@ -44,7 +44,7 @@ const Transcationform = () => {
       return;
     }
 
-    setLoading(true); // Move this down to ensure it's set only if token exists.
+    setLoading(true); 
 
     try {
       const response = await axios.post(
@@ -131,14 +131,14 @@ const Transcationform = () => {
           <CardContent>
             <h1>Date</h1>
             <Input
-              placeholder="Enter date"
+              placeholder="Enter date of transcations"
               type="date"
               className="border-gray-500"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
           </CardContent>
-          <CardFooter className="flex flex-col gap-2">
+          <CardFooter className="flex flex-col gap-3">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Saving..." : "Save Transaction"}
             </Button>
