@@ -1,3 +1,5 @@
+
+'use client'
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -18,7 +20,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 
-const Transcationform = () => {
+interface TranscationFormProps {
+  onSuccess: () => void; // Add onSuccess prop
+}
+
+const Transcationform: React.FC<TranscationFormProps> = ({ onSuccess }) => {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("");
   const [description, setDescription] = useState("");
@@ -58,6 +64,8 @@ const Transcationform = () => {
       );
 
       setSuccess(response.data.msg || "Transaction added successfully");
+      // Call the onSuccess function to trigger a refetch
+      onSuccess();
 
       setAmount("");
       setType("");

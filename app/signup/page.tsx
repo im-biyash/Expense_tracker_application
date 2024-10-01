@@ -59,6 +59,7 @@ const Signup = () => {
       setError("All fields are required");
       return;
     }
+    
 
     // Trigger the mutation with form data
     mutation.mutate({ username, email, password });

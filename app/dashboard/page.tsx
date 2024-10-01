@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import Transcationform from "@/components/Transcationform";
 import DoughnutChart from "@/components/DoughnutChart";
 import withAuth from "../utils/withAuth";
-import useAuthStore from "../../app/stores/authStore"; // Corrected import statement
+import useAuthStore from "../../app/stores/authStore";
 
 // Define the function to fetch transactions
 const fetchTransactions = async (): Promise<any[]> => {
@@ -17,12 +17,11 @@ const fetchTransactions = async (): Promise<any[]> => {
   const response = await axios.get(`${url}/api/transaction/get`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return response.data.transactions; // Ensure this matches the expected response structure
+  return response.data.transactions; 
 };
 
-// Dashboard component
 const Dashboard = () => {
-  const { username } = useAuthStore(); // Moved inside the component
+  const { username } = useAuthStore(); 
 
   // React Query hook to fetch transactions
   const {
@@ -30,6 +29,7 @@ const Dashboard = () => {
     isLoading,
     isError,
     error,
+    refetch, // Get the refetch function
   } = useQuery({
     queryKey: ["transactions"],
     queryFn: fetchTransactions,
@@ -69,14 +69,13 @@ const Dashboard = () => {
         </h1>
       </div>
 
-      {/* Flex container for form and chart */}
       <div className="flex flex-col md:flex-row md:items-start md:justify-evenly gap-2">
         {/* Transcationform comes first in mobile view */}
         <div className="flex flex-col gap-2 mb-2 md:mb-0">
-          <Transcationform />
+          {/* Pass refetch function to Transcationform */}
+          <Transcationform onSuccess={refetch} />
         </div>
 
-        {/* DoughnutChart will appear beside Transcationform in larger view */}
         <div className="flex flex-col gap-2 mt-8 justify-center">
           <DoughnutChart
             income={totals.income}
