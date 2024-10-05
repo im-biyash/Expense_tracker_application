@@ -105,10 +105,10 @@ const Navbar = () => {
             </Button>
           )}
         </div>
-        <div className="md:hidden flex items-center">
+        <div className=" flex items-center">
           <ModeToggle />
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hover:text-blue-500 transition-colors duration-300">
-            <FaBars className="w-6 h-6 text-white" />
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className=" hover:text-blue-500 transition-colors duration-300">
+            <FaBars className=" md:hidden w-6 h-6 text-white" />
           </button>
         </div>
       </nav>

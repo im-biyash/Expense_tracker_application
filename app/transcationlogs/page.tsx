@@ -60,17 +60,27 @@ const Page = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions?.map((transaction) => (
-                  <TableRow key={transaction._id}>
-                    <TableCell className="text-sm">{transaction.amount}</TableCell>
-                    <TableCell className="text-sm">{transaction.type}</TableCell>
-                    <TableCell className="text-sm">{transaction.description}</TableCell>
-                    <TableCell className="text-sm">
-                      {new Date(transaction.date).toLocaleDateString()}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+  {transactions?.map((transaction) => (
+    <TableRow key={transaction._id}>
+      <TableCell className="text-sm">{transaction.amount}</TableCell>
+      <TableCell 
+        className={`text-sm ${
+          transaction.type === "income" ? "text-green-300" :
+          transaction.type === "expense" ? "text-red-500" :
+          transaction.type === "investment" ? "text-yellow-500" :
+          ""
+        }`}
+      >
+        {transaction.type}
+      </TableCell>
+      <TableCell className="text-sm">{transaction.description}</TableCell>
+      <TableCell className="text-sm">
+        {new Date(transaction.date).toLocaleDateString()}
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
             </Table>
           </div>
         </CardContent>
